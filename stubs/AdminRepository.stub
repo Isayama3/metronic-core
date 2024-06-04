@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Base\Repositories\BaseRepository;
+use App\Models\{{name}};
+
+class {{name}}Repository extends BaseRepository
+{
+     /**
+     * {{name}}Repository constructor.
+     * @param {{name}} $model
+     */
+    public function __construct({{name}} $model)
+    {
+        parent::__construct($model);
+    }
+
+}
+
+

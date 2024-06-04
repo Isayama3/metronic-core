@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Services\User;
+
+use App\Base\Services\BaseService;
+use App\Repositories\{{name}}Repository;
+
+class {{name}}Service extends BaseService
+{
+    protected {{name}}Repository ${{name}}Repository;
+
+    public function __construct({{name}}Repository ${{name}}Repository)
+    {
+        parent::__construct(${{name}}Repository);
+        $this->{{name}}Repository = ${{name}}Repository;
+    }
+}
+
+

@@ -1,0 +1,27 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Base\Request\Api\BaseRequest;
+use App\Base\Request\Api\UserBaseRequest;
+use App\Base\Request\Api\AdminBaseRequest;
+
+class {{ class }} extends BaseRequest
+{
+    public function rules(): array
+    {
+        switch ($this->method()) {
+            case 'GET':
+            case 'DELETE': {
+                    return [];
+                }
+            case 'POST': {
+                    return [
+                    ];
+                }
+            case 'PUT': {
+                    return [];
+                }
+        }
+    }
+}

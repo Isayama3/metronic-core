@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers\Admin\{{name}};
+
+use App\Base\Controllers\BaseWebController;
+use App\Http\Requests\Admin\{{name}}Request as FormRequest;
+use App\Models\{{name}} as Model;
+use App\Services\Admin\{{name}}Service as Service;
+
+class {{name}}Controller extends BaseWebController
+{
+    protected ${{name}}Service;
+    
+    public function __construct(
+        FormRequest $request,
+        Model $model,
+        Service $service,
+    ) {
+        parent::__construct(
+            $request,
+            $model,
+            $service,
+            hasDelete: true,
+            hasShow: false,
+            hasCreate: true,
+            hasEdit: true,
+            view_path: 'admin.{{name}}.'
+        );
+        
+        $this->{{name}}Service = $service;
+        $this->{{name}}Service->setIndexRelations([]);
+        $this->{{name}}Service->setOneItemRelations([]);
+        $this->{{name}}Service->setCustomWhen($this->customWhen());
+    }
+
+    public function customWhen(): array
+    {
+        return [
+            'condition' => false,
+            'callback' => function ($q) {
+            },
+        ];
+    }
+}

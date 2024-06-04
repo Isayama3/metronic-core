@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Http\Controllers\User;
+
+use App\Base\Controllers\BaseApiController;
+use App\Http\Requests\User\{{name}}Request as FormRequest;
+use App\Models\{{name}} as Model;
+use App\Http\Resources\{{name}}Resource as Resource;
+use App\Services\User\{{name}}Service as Service;
+
+class {{name}}Controller extends BaseApiController
+{
+    protected ${{name}}Service;
+    
+    public function __construct(
+        FormRequest $request,
+        Model $model,
+        Service $service,
+    ) {
+        parent::__construct(
+            $request,
+            $model,
+            new Resource($model),
+            $service,
+            hasDelete: false,
+        );
+        
+        $this->{{name}}Service = $service;
+        $this->{{name}}Service->setIndexRelations([]);
+        $this->{{name}}Service->setOneItemRelations([]);
+        $this->{{name}}Service->setCustomWhen($this->customWhen());
+    }
+
+    public function customWhen(): array
+    {
+        return [
+            'condition' => false,
+            'callback' => function ($q) {
+            },
+        ];
+    }
+}
