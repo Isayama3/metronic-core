@@ -22,9 +22,10 @@ class BaseRequest extends FormRequest
         foreach ($validator->errors()->toArray() as $key => $error) {
             $errors[$key] = $error[0];
         }
-        
+
         throw new HttpResponseException($this->respondWithErrors(
-            data: $errors
+            message: $errors[array_key_first($errors)],
+            errors: $errors
         ));
     }
 }

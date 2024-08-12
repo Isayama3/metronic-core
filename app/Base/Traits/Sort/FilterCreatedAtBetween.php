@@ -10,15 +10,13 @@ class FilterCreatedAtBetween implements Filter
 {
     public function __invoke(Builder $query, $value,  string $property)
     {
-        $relationships = explode('.', $property);
-        $table = $relationships[0];
         $operator = '>=';
         $value_in = Carbon::parse($value);
-        if ($property == $table . '.created_to') {
+        if ($property == 'created_to') {
             $operator = '<=';
             $value_in = Carbon::parse($value)->endOfDay();
         }
-        $property = $table . '.created_at';
+        $property = 'created_at';
         $query->where($property, $operator, $value_in);
     }
 }

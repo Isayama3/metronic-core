@@ -48,7 +48,7 @@
                     </div>
                     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
                         <a href="#" class="d-lg-none">
-                            <img alt="Logo" src="assets/media/logos/default-small.svg" class="h-30px" />
+                            <img alt="Logo" src="{{asset('dashboard/media/logos/default-small.svg')}}" class="h-30px" />
                         </a>
                     </div>
                     <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1"
@@ -79,7 +79,7 @@
                         <div id="kt_app_content_container" class="app-container container-fluid">
                             <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
                                 <div id="kt_app_toolbar_container"
-                                    class="app-container container-xxl d-flex flex-stack" style="max-width: 100% !important;">
+                                    class="app-container container-xxl d-flex flex-stack justify-content-center"  style="max-width: 100% !important;">
                                     <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3" >
                                         <h1
                                             class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0" >

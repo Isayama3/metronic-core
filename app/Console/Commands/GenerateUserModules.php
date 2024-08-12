@@ -51,7 +51,7 @@ class GenerateUserModules extends Command
     protected function generateController($name)
     {
         $stub = $this->getStub('UserController');
-        $this->createFile("Http/Controllers/User/{$name}Controller.php", $stub, $name);
+        $this->createFile("Http/Controllers/User/{$name}/{$name}Controller.php", $stub, $name);
     }
 
     protected function createFile($path, $stub, $name)

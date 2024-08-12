@@ -17,7 +17,7 @@ class UserBaseRequest extends FormRequest
         if (app()->runningInConsole()) {
             return true;
         }
-        
+
         return Auth::guard('user-api')->check();
     }
 
@@ -29,7 +29,8 @@ class UserBaseRequest extends FormRequest
         }
 
         throw new HttpResponseException($this->respondWithErrors(
-            data: $errors
+            message: $errors[array_key_first($errors)],
+            errors: $errors
         ));
     }
 }

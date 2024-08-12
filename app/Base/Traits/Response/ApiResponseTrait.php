@@ -2,7 +2,9 @@
 
 namespace App\Base\Traits\Response;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 trait ApiResponseTrait
 {
@@ -37,7 +39,7 @@ trait ApiResponseTrait
      * @param array $data
      * @return JsonResponse
      */
-    protected function respondWithSuccess(string $message = null, array $data = []): JsonResponse
+    protected function respondWithSuccess(string $message = null, array|JsonResource $data = []): JsonResponse
     {
         $response['status'] = 200;
         $response['message'] = !empty($message) ? $message : __('Success');
@@ -91,7 +93,7 @@ trait ApiResponseTrait
         ];
 
         $response['data'] = $result;
-        
+
         if (($with_meta)) $response["pages"] = ceil($response["total"] / $response["per_page"]);
 
         return response()->json($response, $status_code);
@@ -111,7 +113,7 @@ trait ApiResponseTrait
                 E_USER_WARNING
             );
         }
-        return $this->respondWithErrors($message, $this->statusCode, [], $message);
+        return $this->respondWithErrors($message, $this->statusCode, [], message: $message);
     }
 
     /**
@@ -123,20 +125,23 @@ trait ApiResponseTrait
      * @param null $message
      * @return JsonResponse
      */
-    protected function respondWithErrors(string $errors = 'messages.error', $statusCode = null, array  $data = [], $message = null): JsonResponse
+    protected function respondWithErrors(string $error_messages = 'messages.error', $statusCode = null, array $errors = [], array|Collection|JsonResource  $data = [],  $message = null): JsonResponse
     {
         $statusCode = !empty($statusCode) ? $statusCode : 400;
 
-        if (is_string($errors))
-            $errors = __($errors);
+        if (is_string($error_messages))
+            $error_messages = __($error_messages);
 
-        $response = ['status' => $statusCode, 'message' => $message, 'errors' => ['message' => [$errors]]];
+        $response = ['status' => $statusCode, 'message' => $message, 'errors' => ['messages' => [$error_messages]]];
 
         if (!empty($message))
             $response['message'] = $message;
 
+        if (!empty($errors))
+            $response['errors'] = $errors;
+
         if (!empty($data))
-            $response['errors'] = $data;
+            $response['data'] = $data;
 
         return $this->setStatusCode($statusCode)->respondWithArray($response);
     }

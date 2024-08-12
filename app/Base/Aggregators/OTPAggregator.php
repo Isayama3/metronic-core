@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aggregators;
+namespace App\Base\Aggregators;
 
 class OTPAggregator
 {

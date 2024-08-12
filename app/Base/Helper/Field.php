@@ -143,6 +143,21 @@ class Field
      * @param null $selected
      * @return string
      */
+    public static function staticSelectWithSearch($name, $label, $options, $selected = null, $required = 'true', $placeholder = null, $disabled = false)
+    {
+        $placeholder = __('admin.choose');
+        return view('admin.layouts.partials.form-fields.static-select-with-search', compact('name', 'label', 'options', 'selected', 'placeholder', 'required', 'placeholder', 'disabled'));
+    }
+
+    /**
+     * @param $name
+     * @param $label
+     * @param $options
+     * @param string $plugin
+     * @param string $placeholder
+     * @param null $selected
+     * @return string
+     */
     public static function multiSelect($name, $label, $options, $selected = null, $required = 'true', $placeholder = null, $disabled = false)
     {
         $placeholder = __('admin.choose');

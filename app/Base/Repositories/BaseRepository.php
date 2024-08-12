@@ -76,6 +76,11 @@ abstract class BaseRepository
         return $this->query->get(['id', $name]);
     }
 
+    public function listNameWhereCondition($name, $column, $value): mixed
+    {
+        return $this->query->where($column, $value)->get(['id', $name]);
+    }
+
     public function getMoreThanOneSelected(array $fields): mixed
     {
         return $this->query->get($fields);
@@ -120,6 +125,16 @@ abstract class BaseRepository
         throw new HttpResponseException($this->setStatusCode(422)->respondWithError(__("Attributes can not be empty")));
     }
 
+    public function createMany(array $attributes = []): mixed
+    {
+        if (!empty($attributes)) {
+            $filtered = $this->cleanUpAttributes($attributes);
+            return $this->model->insert($filtered);
+        }
+        
+        return false;
+    }
+    
     /**
      * @param Model $model
      * @param array $attributes

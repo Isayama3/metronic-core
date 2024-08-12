@@ -10,10 +10,10 @@
 </style>
 
 <div class="form-group mb-5 {{ $errors->has($name) ? 'is-invalid' : '' }}" id="{{ __('admin.' . $name) }}_wrap">
-    {{-- <label class="mb-1" for="{{ $name }}">{{ __('admin.' . $label) }}</label> --}}
+    <label class="mb-1" for="{{ $name }}">{{ __('admin.' . $label) }}</label>
     <br>
     <div class="image-input image-input-empty" data-kt-image-input="true">
-        <div class="image-input-wrapper w-150px h-150px" style="background-image: url({{ $old_image }})"></div>
+        <div class="image-input-wrapper w-150px h-150px" style="background-image: url({{ $old_image ?? asset('dashboard/media/avatars/300-1.jpg') }})"></div>
         @if (!$disabled)
             <label class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
                 data-kt-image-input-action="change" data-bs-toggle="tooltip" data-bs-dismiss="click"

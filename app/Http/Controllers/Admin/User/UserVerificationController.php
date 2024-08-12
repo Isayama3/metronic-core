@@ -20,8 +20,12 @@ class UserVerificationController extends BaseWebController
             $request,
             $model,
             $service,
+            view_path: 'admin.user-verifications.',
             hasDelete: false,
-            view_path: 'admin.user-verifications.'
+            storePermission: 'admin.user-verifications.store',
+            showPermission: 'admin.user-verifications.show',
+            updatePermission: 'admin.user-verifications.update',
+            destroyPermission: 'admin.user-verifications.destroy',
         );
 
         $this->UserVerificationService = $service;
@@ -41,13 +45,21 @@ class UserVerificationController extends BaseWebController
 
     public function verify($user_id, $action)
     {
-        $this->UserVerificationService->verify($user_id, $action);
-        return redirect()->route('admin.users.index')->with('success', __('admin.successfully_verified'));
+        try {
+            $this->UserVerificationService->verify($user_id, $action);
+            return back()->with('success', __('admin.successfully_verified'));
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function unVerify($user_id, $action)
     {
-        $this->UserVerificationService->unVerify($user_id, $action);
-        return redirect()->route('admin.users.index')->with('success', __('admin.successfully_rejected'));
+        try {
+            $this->UserVerificationService->unVerify($user_id, $action);
+            return back()->with('success', __('admin.successfully_rejected'));
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

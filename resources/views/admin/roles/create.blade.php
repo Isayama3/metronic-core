@@ -33,7 +33,7 @@
                                 {{ $roleModel->hasPermissionTo($value) ? 'checked' : '' }} value="{{ $value->id }}"
                                 name="permissions[]">
                             <label class="form-check-label"
-                                for="{{ $value->id }}">{{ Str::limit($value->name, 25) }}</label>
+                                for="{{ $value->id }}">{{ Str::limit($value->display_name, 25) }}</label>
                         </div>
                     @endforeach
                 </div>

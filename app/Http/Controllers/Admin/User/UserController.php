@@ -20,15 +20,19 @@ class UserController extends BaseWebController
             $request,
             $model,
             $service,
-            hasDelete: false,
+            view_path: 'admin.users.',
             hasCreate: false,
             hasEdit: false,
-            view_path: 'admin.users.'
+            hasDelete: false,
+            storePermission: 'admin.users.store',
+            showPermission: 'admin.users.show',
+            updatePermission: 'admin.users.update',
+            destroyPermission: 'admin.users.destroy',
         );
 
         $this->UserService = $service;
         $this->UserService->setIndexRelations([]);
-        $this->UserService->setOneItemRelations([]);
+        $this->UserService->setOneItemRelations(['ride_requests', 'ride_requests.ride', 'wallet']);
         $this->UserService->setCustomWhen($this->customWhen());
     }
 

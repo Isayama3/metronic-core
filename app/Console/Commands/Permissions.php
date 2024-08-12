@@ -53,9 +53,13 @@ class Permissions extends Command
         }
 
         $role = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'admin']);
-        $permissions = Permission::all();
+        $permissions = Permission::pluck('id')->toArray();
         $role->syncPermissions($permissions);
         $admin = Admin::first();
         $admin->assignRole('super_admin');
+
+        $role = Role::firstOrCreate(['name' => 'agent', 'guard_name' => 'admin']);
+        $permissions = Permission::where('name', 'admin.agents.show')->pluck('id')->toArray();
+        $role->syncPermissions($permissions);
     }
 }

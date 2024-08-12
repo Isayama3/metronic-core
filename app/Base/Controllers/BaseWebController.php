@@ -13,10 +13,15 @@ abstract class BaseWebController
     protected $model;
     protected BaseService $service;
     protected $view_path;
-    protected $hasDelete;
     protected $hasCreate;
-    protected $hasEdit;
+    protected $storePermission;
     protected $hasShow;
+    protected $showPermission;
+    protected $hasEdit;
+    protected $updatePermission;
+    protected $hasDelete;
+    protected $destroyPermission;
+
 
     protected $indexRelations = [];
     protected $oneItemRelations = [];
@@ -28,18 +33,28 @@ abstract class BaseWebController
         BaseService $service,
         $view_path = null,
         $hasCreate = true,
-        $hasEdit = true,
         $hasShow = true,
+        $hasEdit = true,
         $hasDelete = true,
+        $storePermission = null,
+        $showPermission = null,
+        $updatePermission = null,
+        $destroyPermission = null
     ) {
         $this->request = $request;
         $this->model = $model;
         $this->service = $service;
         $this->view_path = $view_path;
-        $this->hasDelete = $hasDelete;
+
         $this->hasCreate = $hasCreate;
-        $this->hasEdit = $hasEdit;
         $this->hasShow = $hasShow;
+        $this->hasEdit = $hasEdit;
+        $this->hasDelete = $hasDelete;
+
+        $this->storePermission = $storePermission;
+        $this->showPermission = $showPermission;
+        $this->updatePermission = $updatePermission;
+        $this->destroyPermission = $destroyPermission;
     }
 
     public function index()
@@ -48,10 +63,17 @@ abstract class BaseWebController
         $edit_route = str_replace('index', 'edit', Request::route()->getName());
         $show_route = str_replace('index', 'show', Request::route()->getName());
         $destroy_route = str_replace('index', 'destroy', Request::route()->getName());
+
         $hasCreate = $this->hasCreate;
         $hasEdit = $this->hasEdit;
         $hasShow = $this->hasShow;
         $hasDelete = $this->hasDelete;
+
+        $storePermission = $this->storePermission;
+        $showPermission = $this->showPermission;
+        $updatePermission = $this->updatePermission;
+        $destroyPermission = $this->destroyPermission;
+
         $records = $this->service->index();
 
         return view($this->view_path . __FUNCTION__, compact(
@@ -63,7 +85,11 @@ abstract class BaseWebController
             'hasCreate',
             'hasEdit',
             'hasShow',
-            'hasDelete'
+            'hasDelete',
+            'storePermission',
+            'showPermission',
+            'updatePermission',
+            'destroyPermission'
         ));
     }
 

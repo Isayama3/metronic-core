@@ -18,9 +18,12 @@ class UserRepository extends BaseRepository
 
     public function getUserByPhoneOrEmail($phone = null, $email = null)
     {
-        return $this->model->where(function ($q) use ($phone, $email) {
-            $q->where('phone', $phone)->orWhere('email', $email);
-        })->first();
+        return $this->model
+            ->where(function ($q) use ($phone, $email) {
+                $q->where('phone', $phone);
+                if ($email)
+                    $q->orWhere('email', $email);
+            })->first();
     }
 
     public function getProfile()

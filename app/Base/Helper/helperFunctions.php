@@ -1,24 +1,26 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Route;
 
 function resourcePermissions($group, $unit, $route, $ignore = [])
 {
     $arr = [
-        'عرض' => 'index',
-        'اضافة' => 'store',
-        'تفاصيل' => 'show',
-        'تعديل' => 'update',
-        'حذف' => 'destroy',
+        'عرض'           => 'index',
+        'صفحة الإضافة'  => 'create',
+        'اضافة'         => 'store',
+        'تفاصيل'        => 'show',
+        'صفحة التعديل'  => 'edit',
+        'تعديل'         => 'update',
+        'حذف'           => 'destroy',
     ];
-    
+
     foreach ($arr as $key => $value) {
         if (in_array($value, $ignore))
             continue;
 
         Permission::firstOrCreate([
-            'name' => $key . ' ' . $unit,
+            'name' => 'admin.' . $route . $value,
+            'display_name' => $key . ' ' . $unit,
             'routes' => $route . $value,
             'group' => $group,
         ]);
@@ -40,7 +42,8 @@ function resourcePermissions($group, $unit, $route, $ignore = [])
 function singlePermission($group, $name, $route)
 {
     Permission::firstOrCreate([
-        'name' => $name,
+        'name' => 'admin.' . $route,
+        'display_name' => $name,
         'routes' => $route,
         'group' => $group,
     ]);

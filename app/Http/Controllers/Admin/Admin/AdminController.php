@@ -20,11 +20,12 @@ class AdminController extends BaseWebController
             $request,
             $model,
             $service,
-            hasDelete: true,
+            view_path: 'admin.admins.',
             hasShow: false,
-            hasCreate: true,
-            hasEdit: true,
-            view_path: 'admin.admins.'
+            storePermission: 'admin.admins.store',
+            showPermission: 'admin.admins.show',
+            updatePermission: 'admin.admins.update',
+            destroyPermission: 'admin.admins.destroy',
         );
 
         $this->AdminService = $service;
@@ -38,7 +39,9 @@ class AdminController extends BaseWebController
         return [
             'condition' => true,
             'callback' => function ($q) {
-                $q->whereNotIn('id', [1]);
+                $q->whereNotIn('id', [1])->whereHas('roles', function ($q) {
+                    $q->where('name', '!=', 'agent');
+                });
             },
         ];
     }

@@ -37,6 +37,24 @@ abstract class BaseApiController
         $this->hasDelete = $hasDelete;
     }
 
+    public function customWhen()
+    {
+        return [
+            'condition' => false,
+            'callback' => function ($q) {
+            },
+        ];
+    }
+
+    public function defaultCustomWhenArray()
+    {
+        return [
+            'condition' => false,
+            'callback' => function ($q) {
+            },
+        ];
+    }
+
     public function index()
     {
         $results = $this->service->index();

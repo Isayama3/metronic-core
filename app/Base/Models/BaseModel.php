@@ -17,7 +17,7 @@ class BaseModel extends Model
 {
     use HasFactory, Timestamp, FilterSort, NotificationAttribute;
 
-    protected $guarded = ['id', 'uuid', 'created_at', 'updated_at', 'image'];
+    protected $guarded = ['id', 'uuid', 'created_at', 'updated_at'];
     protected $hidden = [
         'password',
         'remember_token',

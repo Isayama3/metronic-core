@@ -10,7 +10,7 @@ use App\Services\Admin\RoleService as Service;
 class RoleController extends BaseWebController
 {
     protected $RoleService;
-    
+
     public function __construct(
         FormRequest $request,
         Model $model,
@@ -20,10 +20,14 @@ class RoleController extends BaseWebController
             $request,
             $model,
             $service,
-            hasDelete: true,
-            view_path: 'admin.roles.'
+            view_path: 'admin.roles.',
+            hasShow: false,
+            storePermission: 'admin.roles.store',
+            showPermission: 'admin.roles.show',
+            updatePermission: 'admin.roles.update',
+            destroyPermission: 'admin.roles.destroy',
         );
-        
+
         $this->RoleService = $service;
         $this->RoleService->setIndexRelations([]);
         $this->RoleService->setOneItemRelations([]);

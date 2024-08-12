@@ -1,4 +1,6 @@
-@extends('admin.layouts.partials.crud-components.show-page')
+@extends('admin.layouts.partials.crud-components.show-page',[
+    'page_header' => __('admin.'),
+])
 @section('show-page')
     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
         <div class="card card-flush py-4">

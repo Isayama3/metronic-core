@@ -17,16 +17,18 @@
                 @method('PUT')
                 @csrf
                 <div class="d-flex flex-column scroll-y me-n7 pe-7">
-                    @yield('form')
+                    <div class="row row-cols-md-2">
+                        @yield('form')
+                    </div>
                 </div>
                 <div class="text-center pt-15">
                     <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit" id="submitBtn"
                         onclick="disableButton(event)">
                         <span class="indicator-label">{{ __('admin.submit') }}</span>
                     </button>
-                    <button type="reset" class="btn btn-danger me-3">
+                    {{-- <button type="reset" class="btn btn-danger me-3">
                         {{ __('admin.reset_fields') }}
-                    </button>
+                    </button> --}}
                 </div>
             </form>
         </div>

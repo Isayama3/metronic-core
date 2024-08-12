@@ -11,6 +11,7 @@ use App\Base\Traits\Response\ApiResponseTrait;
 abstract class BaseService
 {
     use ApiResponseTrait, ResizableImageTrait, AttachmentAttribute;
+
     /**
      * @var BaseRepository
      */
@@ -37,10 +38,23 @@ abstract class BaseService
         return $this->repository->getAllDataPaginated();
     }
 
+    public function getAllRidesWithoutAnyConditions()
+    {
+        $this->repository->initFilters();
+        $this->repository->setRelations($this->getIndexRelations());
+        $this->repository->setCustomWhen($this->getCustomWhen());
+        return $this->repository->getAllDataPaginated();
+    }
+
     public function list($name)
     {
         $this->repository->setCustomWhen($this->getCustomWhen());
         return $this->repository->getSelected($name);
+    }
+
+    public function listNameWhereCondition($name, $column, $value)
+    {
+        return $this->repository->listNameWhereCondition($name, $column, $value);
     }
 
     public function listWhereTableName($table_name)
@@ -50,7 +64,6 @@ abstract class BaseService
 
     public function show($id)
     {
-        $this->repository->setCustomWhen($this->getCustomWhen());
         $this->repository->setRelations($this->getOneItemRelations());
         return $this->repository->findOrFail($id);
     }
@@ -91,7 +104,6 @@ abstract class BaseService
      */
     public function update($id, $data)
     {
-        $this->repository->setCustomWhen($this->getCustomWhen());
         $this->repository->setRelations($this->getOneItemRelations());
         $model = $this->repository->update($id, $data);
         $this->uploadRequestImages($data, $model);
@@ -99,10 +111,6 @@ abstract class BaseService
         return $model;
     }
 
-    public function getMoreThanOneSelected(array $data)
-    {
-        return $this->repository->getMoreThanOneSelected($data);
-    }
 
     public function destroy($id)
     {
@@ -150,6 +158,15 @@ abstract class BaseService
         ];
     }
 
+    public function storeMany($data)
+    {
+        return $this->repository->createMany($data);
+    }
+
+    public function getMoreThanOneSelected(array $data)
+    {
+        return $this->repository->getMoreThanOneSelected($data);
+    }
     public function uploadRequestImages($attributes, $model)
     {
         $keys = array_keys($attributes);
@@ -160,21 +177,6 @@ abstract class BaseService
         foreach ($image_attributes as $image_attribute) {
             if (isset($attributes[$image_attribute]) && !is_null($attributes[$image_attribute])) {
                 $model->$image_attribute = $this->uploadImage($attributes[$image_attribute]);
-                $model->save();
-            }
-        }
-    }
-
-    public function updateRequestImages($attributes, $model)
-    {
-        $keys = array_keys($attributes);
-        $image_attributes = array_filter($keys, function ($key) {
-            return strpos($key, 'image') !== false;
-        });
-
-        foreach ($image_attributes as $image_attribute) {
-            if (isset($attributes[$image_attribute]) && !is_null($attributes[$image_attribute])) {
-                $model->$image_attribute = $this->updateImage($attributes[$image_attribute], $model->$image_attribute);
                 $model->save();
             }
         }

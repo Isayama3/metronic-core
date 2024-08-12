@@ -15,17 +15,19 @@
                 </span>
             </div>
             <div class="" style="display: flex;flex-direction: row;">
-                <button class="btn btn-danger m-1" type="submit" id="reset-then-submit"
-                    data-bs-toggle="collapse"><i class="fas fa-search-minus"></i>
+                <button class="btn btn-danger m-1" type="submit" id="reset-then-submit" data-bs-toggle="collapse"><i
+                        class="fas fa-search-minus"></i>
                     {{ __('admin.reset_search') }}
                 </button>
                 @if ($create_route && $hasCreate)
-                    <a href="{{ route($create_route) }}">
-                        <button href class="btn btn-primary m-1 float-end" type="button">
-                            <i class="bi bi-plus-lg"></i>
-                            {{ __('admin.add_new') }}
-                        </button>
-                    </a>
+                    @can($storePermission)
+                        <a href="{{ route($create_route) }}">
+                            <button href class="btn btn-primary m-1 float-end" type="button">
+                                <i class="bi bi-plus-lg"></i>
+                                {{ __('admin.add_new') }}
+                            </button>
+                        </a>
+                    @endcan
                 @endif
             </div>
         </div>
@@ -42,11 +44,10 @@
                             </div>
                         @endforeach
                         <div class="col-md-3 col-12">
-                            {{ \App\Base\Helper\Field::date(name: 'filter[created_at]', label: 'created_at', required: 'false') }}
-
+                            {{ \App\Base\Helper\Field::date(name: 'filter[created_from]', label: 'created_from', required: 'false') }}
                         </div>
                         <div class="col-md-3 col-12">
-                            {{ \App\Base\Helper\Field::date(name: 'filter[updated_at]', label: 'updated_at', required: 'false') }}
+                            {{ \App\Base\Helper\Field::date(name: 'filter[created_to]', label: 'created_to', required: 'false') }}
                         </div>
                     </div>
                 </div>

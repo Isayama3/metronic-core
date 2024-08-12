@@ -19,11 +19,7 @@
         <link href="{{ asset('dashboard/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('dashboard/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     @endif
-    <style>
-        .form-control:disabled {
-            color: whitesmoke !important;
-        }
-    </style>
+    
     @stack('styles')
 
 </head>

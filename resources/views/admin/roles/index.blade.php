@@ -12,7 +12,8 @@
     <th class="min-w-30 text-center"># </th>
     <th class="min-w-125px max-w-215px text-center">{{ __('admin.name') }}</th>
     <th class="min-w-125px max-w-215px text-center">{{ __('admin.permissions') }}</th>
-    <th class="min-w-125px max-w-215px text-center">{{ __('admin.created_at_&_updated_at') }}</th>
+    {{-- <th class="min-w-125px max-w-215px text-center">{{ __('admin.created_at_&_updated_at') }}</th> --}}
+
 @stop
 
 @section('table_body')
@@ -23,7 +24,7 @@
             <td>
                 <button type="button" class="btn  btn-sm btn-info" data-bs-toggle="modal"
                     data-bs-target="#permissions_{{ $record->id }}">
-                    عرض الصلاحيات
+                    {{ __('admin.show_permissions') }}
                 </button>
                 <div class="modal fade" tabindex="-1" id="permissions_{{ $record->id }}">
                     <div class="modal-dialog">
@@ -40,25 +41,32 @@
                                 <div class="badges row" style="gap:10px;">
                                     @foreach ($record->permissions->groupBy('group') as $group => $permissions)
                                         <div class="col-12">
-                                            <span>{{ $group }}</span>
+                                            <span class="badge badge-success mb-2"
+                                                style="font-size:larger;">{{ $group }}</span>
+                                            <div class="row">
+                                                @foreach ($permissions as $permission)
+                                                    <div class="col-md-4 mb-1">
+                                                        <span class="badge badge-primary"
+                                                            style="font-size:small;">{{ $permission->display_name }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
                                             <br>
-                                            @foreach ($permissions as $permission)
-                                                <span class="badge badge-light-primary">{{ $permission->name }}</span>
-                                            @endforeach
                                         </div>
+                                        <hr />
                                     @endforeach
                                 </div>
-                            </div>
 
+                            </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-light"
+                                    data-bs-dismiss="modal">{{ __('admin.close') }}</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </td>
-
-            <td style="display: inline-grid;gap: 5px;">
+            {{-- <td>
                 <div class="badge badge-light-primary">
                     {{ __('admin.created_at') }}&nbsp;&nbsp;:&nbsp;&nbsp;
                     {{ $record->created_at }}
@@ -67,7 +75,7 @@
                     {{ __('admin.updated_at') }}&nbsp;&nbsp;:&nbsp;&nbsp;
                     {{ $record->updated_at }}
                 </div>
-            </td>
+            </td> --}}
             <td class="text-end">
                 @include('admin.layouts.partials.crud-components.actions-buttons', [
                     'hasShow' => $hasShow,
