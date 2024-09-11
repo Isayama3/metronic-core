@@ -93,7 +93,7 @@
     <div class="menu-item">
         <span class="menu-link">
             <span class="menu-icon">
-                <i class="fas fa-user-tie fs-2"></i>
+                <i class="fa-solid fa-users-gear"></i>
             </span>
             <a class="menu-link" href="{{ route('admin.admins.index') }}">
                 <span class="menu-title">{{ __('admin.admins') }}</span>
@@ -101,7 +101,44 @@
         </span>
     </div>
 @endcan
-
+@can('admin.wallet-tickets.index')
+    <div class="menu-item">
+        <span class="menu-link">
+            <span class="menu-icon">
+                <i class="fa-solid fa-money-bill"></i>
+            </span>
+            <a class="menu-link" href="{{ route('admin.wallet-tickets.index') }}">
+                <span class="menu-title">{{ __('admin.users_wallet_tickets') }}</span>
+            </a>
+        </span>
+    </div>
+@endcan
+@can('admin.bank-accounts.index')
+    <div class="menu-item">
+        <span class="menu-link">
+            <span class="menu-icon">
+                <i class="fa-solid fa-landmark"></i>
+            </span>
+            <a class="menu-link" href="{{ route('admin.bank-accounts.index') }}">
+                <span class="menu-title">{{ __('admin.bank_accounts') }}</span>
+            </a>
+        </span>
+    </div>
+@endcan
+@can('admin.agent-bank-account-transactions.index')
+    @if (auth('admin')->user()->roles->contains('name', 'agent'))
+        <div class="menu-item">
+            <span class="menu-link">
+                <span class="menu-icon">
+                    <i class="fa-solid fa-landmark"></i>
+                </span>
+                <a class="menu-link" href="{{ route('admin.agent-bank-account-transactions.index') }}">
+                    <span class="menu-title">{{ __('admin.bank_accounts_deposites') }}</span>
+                </a>
+            </span>
+        </div>
+    @endif
+@endcan
 @can('admin.roles.index')
     <div class="menu-item">
         <span class="menu-link">

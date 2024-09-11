@@ -4,6 +4,7 @@ namespace App\Base\Notification;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class NotificationService
 {
@@ -21,6 +22,7 @@ class NotificationService
      * NotificationService constructor.
      *
      * @param NotificationRepository $notificationRepository
+
      */
     public function __construct(NotificationRepository $notificationRepository)
     {
@@ -40,21 +42,31 @@ class NotificationService
     }
 
     /**
-     * Send notification
+     * Send notification to multiple users.
      *
-     * @param string $channelName
-     * @param string $token
-     * @param Model|Authenticatable $user
+     * @param array $channels  array of channels ['fcm', 'email', 'whatsapp',....]
+     * @param Collection|Model|Authenticatable $users  // Collection of users from DB
      * @param string $title
      * @param string $body
      * @param string|null $icon_path
+     * @param string|null $target_type
+     * @param int|null $target_id
      * @return void
      */
-    public function send(string $channelName, string|null $token, Model|Authenticatable $user, string $title, string $body, string $icon_path = null, string|null $target_type, int|null $target_id): void
-    {
-        $this->validateChannel($channelName);
-        $this->sendNotification($channelName, $token, $title, $body, $icon_path);
-        $this->notificationRepository->save($channelName, $user, $title, $body, $icon_path, $target_type, $target_id);
+    public function send(
+        array $channels,
+        Collection | Model | Authenticatable $users,
+        string $title,
+        string $body,
+        ?string $icon_path = null,
+        ?string $target_type = null,
+        ?int $target_id = null
+    ): void {
+        foreach ($channels as $channelName) {
+            $this->validateChannel($channelName);
+            $this->notificationChannels[$channelName]->send($users, $title, $body, $icon_path, $target_type, $target_id);
+            $this->notificationRepository->save($channelName, $users, $title, $body, $icon_path, $target_type, $target_id);
+        }
     }
 
     /**
@@ -66,36 +78,7 @@ class NotificationService
     protected function validateChannel(string $channelName): void
     {
         if (!isset($this->notificationChannels[$channelName])) {
-            throw new \InvalidArgumentException("Invalid notification channel: $channelName");
+            throw new \InvalidArgumentException("Channel '$channelName' not registered.");
         }
-    }
-
-    /**
-     * Send notification
-     *
-     * @param string $channelName
-     * @param string|null $token
-     * @param string $title
-     * @param string $body
-     * @param string|null $icon_path
-     * @return mixed
-     */
-    protected function sendNotification(
-        string $channelName,
-        string|null $token,
-        string $title,
-        string $body,
-        string $icon_path = null,
-        string|null $target_type = null,
-        int|null $target_id = null
-    ): mixed {
-        return $token !== null ? $this->notificationChannels[$channelName]->send(
-            token: $token,
-            title: $title,
-            body: $body,
-            icon_path: $icon_path,
-            target_type: $target_type,
-            target_id: $target_id
-        ) : null;
     }
 }

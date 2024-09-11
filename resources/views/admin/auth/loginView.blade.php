@@ -64,7 +64,8 @@
                 <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-md-600px p-20">
                     <div class="d-flex flex-center flex-column flex-column-fluid px-lg-10 pb-15 pb-lg-20">
                         <form class="form w-100" novalidate="novalidate" id="kt_sign_in_form"
-                            data-kt-redirect-url="{{ route('admin.home.index') }}" action="{{ route('admin.login.post') }}">
+                            data-kt-redirect-url="{{ route('admin.home.index') }}"
+                            action="{{ route('admin.login.post') }}">
                             @csrf
                             <div class="text-center mb-11">
                                 <h1 class="text-dark fw-bolder mb-3">{{ __('admin.login') }}</h1>
@@ -96,7 +97,199 @@
 
     <script src="{{ asset('dashboard/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('dashboard/js/scripts.bundle.js') }}"></script>
-    <script src="{{ asset('dashboard/js/custom/authentication/sign-in/general.js') }}"></script>
+    {{-- <script src="{{ asset('dashboard/js/custom/authentication/sign-in/general.js') }}"></script> --}}
+    <script>
+        "use strict";
+        var KTSigninGeneral = function() {
+            var form;
+            var submitButton;
+            var validator;
+
+            var handleValidation = function(e) {
+                validator = FormValidation.formValidation(
+                    form, {
+                        fields: {
+                            'email': {
+                                validators: {
+                                    regexp: {
+                                        regexp: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                        message: 'The value is not a valid email address',
+                                    },
+                                    notEmpty: {
+                                        message: 'Email address is required'
+                                    }
+                                }
+                            },
+                            'password': {
+                                validators: {
+                                    notEmpty: {
+                                        message: 'The password is required'
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            trigger: new FormValidation.plugins.Trigger(),
+                            bootstrap: new FormValidation.plugins.Bootstrap5({
+                                rowSelector: '.fv-row',
+                                eleInvalidClass: '', // comment to enable invalid state icons
+                                eleValidClass: '' // comment to enable valid state icons
+                            })
+                        }
+                    }
+                );
+            }
+
+            var handleSubmitDemo = function(e) {
+                submitButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    validator.validate().then(function(status) {
+                        if (status == 'Valid') {
+                            submitButton.setAttribute('data-kt-indicator', 'on');
+                            submitButton.disabled = true;
+                            setTimeout(function() {
+                                submitButton.removeAttribute('data-kt-indicator');
+                                submitButton.disabled = false;
+                                Swal.fire({
+                                    text: "You have successfully logged in!",
+                                    icon: "success",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                }).then(function(result) {
+                                    if (result.isConfirmed) {
+                                        form.querySelector('[name="email"]').value =
+                                            "";
+                                        form.querySelector('[name="password"]')
+                                            .value = "";
+                                        var redirectUrl = form.getAttribute(
+                                            'data-kt-redirect-url');
+                                        if (redirectUrl) {
+                                            location.href = redirectUrl;
+                                        }
+                                    }
+                                });
+                            }, 2000);
+                        } else {
+                            Swal.fire({
+                                text: "Sorry, looks like there are some errors detected, please try again.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            var handleSubmitAjax = function(e) {
+                submitButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    validator.validate().then(function(status) {
+                        if (status == 'Valid') {
+                            submitButton.setAttribute('data-kt-indicator', 'on');
+                            submitButton.disabled = true;
+                            axios.post(submitButton.closest('form').getAttribute('action'),
+                                new FormData(form)).then(function(response) {
+                                if (response.data.status != 'fail') {
+                                    form.reset();
+                                    Swal.fire({
+                                        text: "You have successfully logged in!",
+                                        icon: "success",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "{{ __('admin.Ok_got_it!') }}",
+                                        customClass: {
+                                            confirmButton: "btn btn-primary"
+                                        }
+                                    });
+                                    const redirectUrl = form.getAttribute(
+                                        'data-kt-redirect-url');
+                                    if (redirectUrl) {
+                                        location.href = redirectUrl;
+                                    }
+                                } else {
+                                    Swal.fire({
+                                        text: "{{ __('admin.sorry_the_email_or_password_is_incorrect_please_try_again.') }}",
+                                        icon: "error",
+                                        buttonsStyling: false,
+                                        confirmButtonText: "{{ __('admin.Ok_got_it!') }}",
+                                        customClass: {
+                                            confirmButton: "btn btn-primary"
+                                        }
+                                    });
+                                }
+                            }).catch(function(error) {
+                                var errors = error.response.data.errors;
+                                var errorMessages = [];
+
+                                Object.keys(errors).forEach(field => {
+                                    if (typeof errors[field] === 'string') {
+                                        errorMessages.push(errors[field]);
+                                    }
+                                });
+                                Swal.fire({
+                                    text: 'Sorry, looks like there are some errors detected, please try again.',
+                                    html: errorMessages.join('<br>'),
+                                    icon: "error",
+                                    buttonsStyling: false,
+                                    confirmButtonText: "Ok, got it!",
+                                    customClass: {
+                                        confirmButton: "btn btn-primary"
+                                    }
+                                });
+                            }).then(() => {
+                                submitButton.removeAttribute('data-kt-indicator');
+                                submitButton.disabled = false;
+                            });
+                        } else {
+                            Swal.fire({
+                                text: "Sorry, looks like there are some errors detected, please try again.",
+                                icon: "error",
+                                buttonsStyling: false,
+                                confirmButtonText: "Ok, got it!",
+                                customClass: {
+                                    confirmButton: "btn btn-primary"
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            var isValidUrl = function(url) {
+                try {
+                    new URL(url);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            return {
+                init: function() {
+                    form = document.querySelector('#kt_sign_in_form');
+                    submitButton = document.querySelector('#kt_sign_in_submit');
+
+                    handleValidation();
+
+                    if (isValidUrl(submitButton.closest('form').getAttribute('action'))) {
+                        handleSubmitAjax();
+                    } else {
+                        handleSubmitDemo();
+                    }
+                }
+            };
+        }();
+
+        KTUtil.onDOMContentLoaded(function() {
+            KTSigninGeneral.init();
+        });
+    </script>
 </body>
 
 </html>

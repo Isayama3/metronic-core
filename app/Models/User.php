@@ -2,35 +2,22 @@
 
 namespace App\Models;
 
+use App\Base\Models\Chat;
+use App\Base\Traits\Custom\NotificationAttribute;
 use App\Base\Traits\Model\FilterSort;
+use App\Enums\UserVerificationStatus;
+use App\Enums\VehicleVerificationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Schema;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, FilterSort;
+    use HasApiTokens, HasFactory, FilterSort, NotificationAttribute;
 
-    protected $fillable = [
-        'full_name',
-        'email',
-        'email_verified_at',
-        'country_code',
-        'phone',
-        'password',
-        'is_smoking',
-        'active',
-        'latitude',
-        'longitude',
-        'birthday',
-        'image',
-        'fcm_token',
-        'nationality_id',
-        'language_id',
-    ];
+    protected $guarded = ['id', 'created_at', 'updated_at'];
 
     protected $hidden = [
         'password',
@@ -47,6 +34,18 @@ class User extends Authenticatable
         'latitude' => 'float',
         'longitude' => 'float',
     ];
+    protected static function boot()
+    {
+        parent::boot();
+        static::updating(function ($model) {
+            $model->load('verifications');
+            if ($model->isDirty('phone'))
+                $model->verifications->update(['phone_status_id' => UserVerificationStatus::UNVERIFIED]);
+
+            if ($model->isDirty('email'))
+                $model->verifications->update(['email_status_id' => UserVerificationStatus::UNVERIFIED]);
+        });
+    }
 
     public static function getTableName()
     {
@@ -104,6 +103,32 @@ class User extends Authenticatable
         return secure_asset("dashboard/blank.jpg");
     }
 
+    public function getIsRegistrationCompletedAttribute(): bool
+    {
+        if (!$this->email || !$this->password) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getIsAllVerifiedForPublishRideAttribute(): bool
+    {
+        $user_verifications = $this->verifications->phone_status_id == UserVerificationStatus::VERIFIED
+            && $this->verifications->national_id_card_status_id == UserVerificationStatus::VERIFIED
+            && $this->verifications->driving_license_status_id == UserVerificationStatus::VERIFIED
+            ? true : false;
+
+        $vehicle_verifications = false;
+        $user_vehicle = $this->vehicles->first();
+        if ($user_vehicle) {
+            $vehicle_verifications = $user_vehicle->verifications->license_status_id == VehicleVerificationStatus::VERIFIED
+                ? true : false;
+        }
+
+        return $user_verifications && $vehicle_verifications;
+    }
+
     public function verifications()
     {
         return $this->hasOne(UserVerification::class, 'user_id');
@@ -124,12 +149,38 @@ class User extends Authenticatable
         return $this->hasMany(Ride::class, 'user_id');
     }
 
-    public function getIsRegistrationCompletedAttribute(): bool
+    public function driverRideRequests()
     {
-        if (!$this->email || !$this->password) {
-            return false;
-        }
-        
-        return true;
+        return $this->hasMany(RideRequest::class, 'driver_id');
+    }
+
+    public function rideRequests()
+    {
+        return $this->hasMany(RideRequest::class, 'user_id');
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class, 'user_id');
+    }
+
+    public function sentChats()
+    {
+        return $this->morphMany(Chat::class, 'sender');
+    }
+
+    public function receivedChats()
+    {
+        return $this->morphMany(Chat::class, 'receiver');
+    }
+
+    public function getRatingAvgAttribute()
+    {
+        return $this->ratings->avg('rating') ?? 0;
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(RideReview::class, 'user_id');
     }
 }

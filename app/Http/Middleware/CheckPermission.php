@@ -16,11 +16,14 @@ class CheckPermission
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
-
         // Check if user is authenticated and has permission
         if ($user->hasAnyPermission($request->route()->getName())) {
             return $next($request);
         }
+
+        // if ($user->roles?->first()?->name == 'agent') {
+        //     return redirect()->route('admin.agents.wallet', ['id' => $user->id]);
+        // }
 
         // If user does not have permission, abort with 403 Forbidden response
         abort(403, 'Unauthorized action.');

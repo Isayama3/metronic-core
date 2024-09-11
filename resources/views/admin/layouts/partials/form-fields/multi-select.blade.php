@@ -5,8 +5,8 @@
 <div class="form-group mb-5 {{ $errors->has($name) ? 'is-invalid' : '' }}">
     <label class="mb-1" for="{{ $name }}">{{ __('admin.' . $label) }}</label>
     <div style="text-align: center;">
-        <select class="form-select" id="js-example-basic-single" data-control="select2"
-            data-placeholder="Select an option">
+        <select class="form-select" id="js-example-basic-single" data-control="select2" data-placeholder="Select an option"
+            name="{{ $name }}[]">
             <option></option>
             <option value="1">Option 1</option>
             <option value="2">Option 2</option>
@@ -21,9 +21,8 @@
 </div>
 @push('scripts')
     <script>
-        $('#js-example-basic-single').select2({
-            placeholder: 'Select an option'
+        $(document).ready(function() {
+            $('.js-example-basic-multiple').select2();
         });
     </script>
-    <script src="{{ asset('plugins/custom/prismjs/prismjs.bundle.js') }}"></script>
 @endpush

@@ -8,7 +8,7 @@ use App\Http\Requests\User\UpdateProfileRequest;
 use App\Http\Requests\User\UserRequest as FormRequest;
 use App\Models\User as Model;
 use App\Http\Resources\UserResource as Resource;
-use App\Services\User\UserService as Service;
+use App\Services\UserService as Service;
 
 class UserController extends BaseApiController
 {
@@ -26,7 +26,7 @@ class UserController extends BaseApiController
             $service,
             hasDelete: false,
         );
-        
+
         $this->UserService = $service;
     }
 
@@ -41,12 +41,12 @@ class UserController extends BaseApiController
 
     public function getAllRelations(): array
     {
-        return [];
+        return ['ratings'];
     }
 
     public function getOneRelations(): array
     {
-        return [];
+        return ['ratings'];
     }
 
     public function getProfile()

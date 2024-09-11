@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
  */
 trait ImageTrait
 {
+    use HttpExceptionTrait;
     /**
      * Undocumented function
      *
@@ -37,7 +38,7 @@ trait ImageTrait
             $image = imagecreatefrompng($tempPath);
             imagepng($image, $uploadPath . $fileRename);
         } else {
-            throw new \Exception('Unsupported image type');
+            return $this->throwHttpExceptionForWebAndApi(__("Unsupported image type"), 422);
         }
 
         // Free up memory
@@ -45,7 +46,6 @@ trait ImageTrait
 
         return 'uploads' . '/' . $path . '/' . $fileRename;
     }
-
 
     /**
      * Upload new images and delete old stored images
@@ -55,7 +55,7 @@ trait ImageTrait
      * @param [type] $old_record
      * @return string
      */
-    public function updateImage($file, string|null $old_file_name, $path = "global", $quality = 60): string
+    public function updateImage($file, string | null $old_file_name, $path = "global", $quality = 60): string
     {
         $file_rename = $this->uploadImage($file, $path, $quality);
         if (File::exists(public_path('uploads' . '/' . $path . '/' . $old_file_name))) {
@@ -65,7 +65,7 @@ trait ImageTrait
         return $file_rename;
     }
 
-    public function deleteImage(string|null $file_name, $path = "global")
+    public function deleteImage(string | null $file_name, $path = "global")
     {
         if (File::exists(public_path('uploads' . '/' . $path . '/' . $file_name))) {
             File::delete(public_path('uploads' . '/' . $path . '/' . $file_name));

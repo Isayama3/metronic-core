@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Role;
 use App\Base\Controllers\BaseWebController;
 use App\Http\Requests\Admin\RoleRequest as FormRequest;
 use App\Models\Role as Model;
-use App\Services\Admin\RoleService as Service;
+use App\Services\RoleService as Service;
 
 class RoleController extends BaseWebController
 {

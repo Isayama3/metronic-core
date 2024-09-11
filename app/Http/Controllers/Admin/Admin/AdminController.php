@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Admin;
 use App\Base\Controllers\BaseWebController;
 use App\Http\Requests\Admin\AdminRequest as FormRequest;
 use App\Models\Admin as Model;
-use App\Services\Admin\AdminService as Service;
+use App\Services\AdminService as Service;
 
 class AdminController extends BaseWebController
 {

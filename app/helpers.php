@@ -2,14 +2,11 @@
 
 use App\Mail\OTPMail;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Mail\SentMessage;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
-
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 if (!function_exists('getLocales')) {
     /**
@@ -22,11 +19,13 @@ if (!function_exists('getLocales')) {
 }
 
 if (!function_exists('activeGuard')) {
-    function activeGuard(): int|string|null
+    function activeGuard(): int | string | null
     {
         foreach (array_keys(config('auth.guards')) as $guard) {
-            if (auth()->guard($guard)->check()) 
+            if (auth()->guard($guard)->check()) {
                 return $guard;
+            }
+
         }
         return null;
     }
@@ -38,7 +37,6 @@ if (!function_exists('get_current_lang')) {
         return App::getLocale();
     }
 }
-
 
 if (!function_exists('formattedCreatedAt')) {
     /**
@@ -189,20 +187,3 @@ if (!function_exists('sendOtpMail')) {
         return $sentMessage instanceof SentMessage;
     }
 }
-
-# HANDLE IMAGES
-if (!function_exists('uploadImage')) {
-    function uploadImage($name, $file, ?Model $model,$clearMedia = true)
-    {
-        if ($file instanceof UploadedFile) {
-            if($clearMedia){
-                $model?->clearMediaCollection($name);
-            }
-
-            return $model->addMedia($file)->toMediaCollection($name);
-        }
-    }
-}
-
-
-

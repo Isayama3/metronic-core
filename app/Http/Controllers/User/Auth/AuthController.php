@@ -4,19 +4,19 @@ namespace App\Http\Controllers\User\Auth;
 
 use App\Base\Traits\Response\ApiResponseTrait;
 use App\Enums\UserVerificationStatus;
-use App\Http\Requests\User\Auth\LoginRequest;
 use App\Http\Requests\Global\Api\SendOTPRequest;
 use App\Http\Requests\Global\Api\VerifyOTPRequest;
 use App\Http\Requests\User\Auth\CompleteRegistrationRequest;
 use App\Http\Requests\User\Auth\ForgetPasswordRequest;
+use App\Http\Requests\User\Auth\LoginRequest;
 use App\Http\Requests\User\Auth\RegisterRequest;
 use App\Http\Requests\User\Auth\ResetPasswordRequest;
 use App\Http\Resources\UserResource;
-use App\Models\UserVerification;
-use App\Services\User\Auth\UserAuthService;
-use App\Services\User\OtpService;
-use App\Services\User\UserService;
-use App\Services\User\UserVerificationService;
+use App\Services\Auth\UserAuthService;
+use App\Services\OtpService;
+use App\Services\UserService;
+use App\Services\UserVerificationService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AuthController
@@ -44,7 +44,7 @@ class AuthController
 
         $data = [
             'access_token' => $this->UserAuthService->createToken($user),
-            'user' => new $this->modelResource($user)
+            'user' => new $this->modelResource($user),
         ];
 
         return $this->respondWithSuccess(__('auth.successfully_login'), $data);
@@ -56,7 +56,10 @@ class AuthController
         try {
             $user = $this->UserService->store($request->validated());
             $this->OtpService->sendOTP(new SendOTPRequest($request->validated()));
+
             $user->verifications()->create();
+            $user->wallet()->create();
+
             DB::commit();
             return $this->respondWithModelData(new $this->modelResource($user));
         } catch (\Exception $e) {
@@ -71,7 +74,7 @@ class AuthController
 
         $data = [
             'access_token' => $request->bearerToken(),
-            'user' => new $this->modelResource($user)
+            'user' => new $this->modelResource($user),
         ];
 
         return $this->respondWithSuccess(__('auth.successfully_register'), $data);
@@ -89,7 +92,7 @@ class AuthController
 
         $data = [
             'access_token' => $access_token,
-            'user' => new $this->modelResource($user)
+            'user' => new $this->modelResource($user),
         ];
 
         return $this->respondWithSuccess(__('auth.successfully_verified'), $data);
@@ -111,5 +114,12 @@ class AuthController
     {
         $this->UserService->update(auth('user-api')->id(), $request->validated());
         return $this->respondWithSuccess(__('auth.password_reset'));
+    }
+
+    public function logout()
+    {
+        auth('user-api')->user()->update(['fcm_token' => null]);
+        Auth::guard('user-api')->user()->tokens()->delete();
+        return $this->respondWithSuccess(__('auth.successfully_logout'));
     }
 }

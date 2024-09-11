@@ -6,19 +6,21 @@ use App\Base\Models\BaseModel;
 
 class Wallet extends BaseModel
 {
-    protected $table = 'wallets';
-    public $timestamps = true;
-
-    protected $fillable = [
-        'user_id',
-        'requested_balance',
-        'wallet_balance',
-        'checkout_balance',
-        'maximum_balance',
+    protected $casts = [
+        'wallet_balance' => 'double',
+        'withdraw_money' => 'double',
+        'to_be_deposit' => 'double',
+        'deposited_money' => 'double',
+        'trip_used_money' => 'double',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(WalletTransaction::class);
     }
 }

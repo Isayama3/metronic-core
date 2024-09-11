@@ -19,7 +19,7 @@ class Field
         "9" => 'سبتمبر',
         "10" => 'أكتوبر',
         "11" => 'نوفمبر',
-        "12" => 'ديسمبر'
+        "12" => 'ديسمبر',
     ];
 
     public static $hijriMonths = [
@@ -34,7 +34,7 @@ class Field
         "9" => 'رمضان',
         "10" => 'شوال',
         "11" => 'ذو القعدة',
-        "12" => 'ذو الحجة'
+        "12" => 'ذو الحجة',
     ];
 
     function __construct()
@@ -89,9 +89,9 @@ class Field
      * @param $label
      * @return string
      */
-    public static function number($name, $label, $value = null, $required = 'true', $placeholder = null, $disabled = false)
+    public static function number($name, $label, $value = null, $required = 'true', $placeholder = null, $disabled = false, $min = null, $max = null)
     {
-        return view('admin.layouts.partials.form-fields.number', compact('name', 'label', 'value', 'required', 'placeholder', 'disabled'));
+        return view('admin.layouts.partials.form-fields.number', compact('name', 'label', 'value', 'required', 'placeholder', 'disabled', 'min', 'max'));
     }
 
     /**
@@ -205,7 +205,6 @@ class Field
         return view('admin.layouts.partials.form-fields.text-editor', compact('name', 'label', 'value', 'required', 'placeholder', 'disabled'));
     }
 
-
     /**
      * @param $name
      * @param $label
@@ -215,7 +214,6 @@ class Field
     {
         return view('admin.layouts.partials.form-fields.file-with-preview', compact('name', 'label', 'required', 'placeholder', 'old_image', 'disabled'));
     }
-
 
     /**
      * @param $name

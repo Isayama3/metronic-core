@@ -8,10 +8,9 @@
         </select>
 
     </div>
-        @if ($errors->has($name))
+    @if ($errors->has($name))
         <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
             <strong id="{{ $name }}_error">{{ $errors->first($name) }}</strong>
         </div>
     @endif
 </div>
-

@@ -1372,14 +1372,6 @@ var KTFormsWidget1 = (function () {
 
             return $(span);
         }
-
-        // Init Select2 --- more info: https://select2.org/
-        $(element).select2({
-            placeholder: "Select coin",
-            minimumResultsForSearch: Infinity,
-            templateSelection: optionFormat,
-            templateResult: optionFormat
-        });
     };
 
     var initForm2 = function () {
@@ -1404,14 +1396,6 @@ var KTFormsWidget1 = (function () {
 
             return $(span);
         }
-
-        // Init Select2 --- more info: https://select2.org/
-        $(element).select2({
-            placeholder: "Select coin",
-            minimumResultsForSearch: Infinity,
-            templateSelection: optionFormat,
-            templateResult: optionFormat
-        });
     };
 
     // Public methods
@@ -17464,15 +17448,6 @@ var KTTablesWidget3 = function () {
     // Handle status filter dropdown
     const handleStatusFilter = () => {
         const select = document.querySelector('[data-kt-table-widget-3="filter_status"]');
-
-        $(select).on('select2:select', function (e) {
-            const value = $(this).val();
-            if (value === 'Show All') {
-                datatable.search('').draw();
-            } else {
-                datatable.search(value).draw();
-            }
-        });
     }
 
     // Public methods
@@ -17551,15 +17526,6 @@ var KTTablesWidget4 = function () {
     // Handle status filter
     const handleStatusFilter = () => {
         const select = document.querySelector('[data-kt-table-widget-4="filter_status"]');
-
-        $(select).on('select2:select', function (e) {
-            const value = $(this).val();
-            if (value === 'Show All') {
-                datatable.search('').draw();
-            } else {
-                datatable.search(value).draw();
-            }
-        });
     }
 
     // Subtable data sample
@@ -17795,15 +17761,6 @@ var KTTablesWidget5 = function () {
     // Handle status filter
     const handleStatusFilter = () => {
         const select = document.querySelector('[data-kt-table-widget-5="filter_status"]');
-
-        $(select).on('select2:select', function (e) {
-            const value = $(this).val();
-            if (value === 'Show All') {
-                datatable.search('').draw();
-            } else {
-                datatable.search(value).draw();
-            }
-        });
     }
 
     // Public methods

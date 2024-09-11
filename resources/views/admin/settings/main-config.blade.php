@@ -18,6 +18,9 @@
                 <div class="d-flex flex-column scroll-y me-n7 pe-7">
                     {{ \App\Base\Helper\Field::number(name: 'ride_request_price_percentage', label: 'ride_request_price_percentage', required: 'true', placeholder: 'ride_request_price_percentage', value: $ride_request_price_percentage) }}
                 </div>
+                <div class="d-flex flex-column scroll-y me-n7 pe-7">
+                    {{ \App\Base\Helper\Field::number(name: 'driver_wallet_max_balance', label: 'driver_wallet_max_balance', required: 'true', placeholder: 'driver_wallet_max_balance', value: $driver_wallet_max_balance) }}
+                </div>
                 <div class="text-center pt-15">
                     <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit" id="submitBtn"
                         onclick="disableButton(event)">

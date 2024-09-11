@@ -13,7 +13,8 @@
     <th class="min-w-125px max-w-215px text-center">{{ __('admin.name') }} </th>
     <th class="min-w-125px max-w-215px text-center">{{ __('admin.email') }}</th>
     <th class="min-w-125px max-w-215px text-center">{{ __('admin.phone') }}</th>
-    <th class="min-w-125px max-w-215px text-center">{{ __('admin.created_at_&_updated_at') }}</th>
+    <th class="min-w-125px max-w-215px text-center">{{ __('admin.roles') }}</th>
+    {{-- <th class="min-w-125px max-w-215px text-center">{{ __('admin.created_at_&_updated_at') }}</th> --}}
 @stop
 
 @section('table_body')
@@ -23,7 +24,14 @@
             <td>{{ $record->full_name }}</td>
             <td>{{ $record->email }}</td>
             <td>{{ $record->phone }}</td>
-            <td style="display: inline-grid;gap: 5px;">
+            <td>
+                @foreach ($record->roles ?? [] as $role)
+                    <div class="badge badge-light-success">
+                        {{ $role->name }}
+                    </div>
+                @endforeach
+            </td>
+            {{-- <td>
                 <div class="badge badge-light-primary">
                     {{ __('admin.created_at') }}&nbsp;&nbsp;:&nbsp;&nbsp;
                     {{ $record->created_at }}
@@ -32,7 +40,7 @@
                     {{ __('admin.updated_at') }}&nbsp;&nbsp;:&nbsp;&nbsp;
                     {{ $record->updated_at }}
                 </div>
-            </td>
+            </td> --}}
             <td class="text-end">
                 @include('admin.layouts.partials.crud-components.actions-buttons', [
                     'hasShow' => $hasShow,

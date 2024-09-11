@@ -117,7 +117,7 @@ abstract class BaseWebController
         if (!$this->hasShow)
             return redirect()->back()->with('error', __('admin.show_is_not_allowed'));
 
-        $record = $this->service->findOrFail($id);
+        $record = $this->service->show($id);
         return view($this->view_path . __FUNCTION__, compact('record'));
     }
 

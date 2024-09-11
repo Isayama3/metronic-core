@@ -1,9 +1,5 @@
-<button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#kt_modal_add_user">
-    </i>{{ __('admin.verifications') }}
-</button>
-
-<div class="modal fade" id="kt_modal_add_user" tabindex="-1" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-fullscreen">
+<div class="modal fade" id="verificationsModal-{{ $id }}" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_user_header">
                 <h2 class="fw-bold">{{ __('admin.verifications') }}</h2>

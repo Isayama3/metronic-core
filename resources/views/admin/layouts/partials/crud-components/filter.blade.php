@@ -43,6 +43,9 @@
                                 {{ call_user_func_array([App\Base\Helper\Field::class, $filter['type']], array_pad([$filter['name'], $filter['label'], isset($filter['options']) ? $filter['options'] : null], 5, null)) }}
                             </div>
                         @endforeach
+                        @foreach ($init_filters ?? [] as $filter)
+                            <input name="filter[{{ $filter['name'] }}]" value="{{ $filter['value'] }}" hidden>
+                        @endforeach
                         <div class="col-md-3 col-12">
                             {{ \App\Base\Helper\Field::date(name: 'filter[created_from]', label: 'created_from', required: 'false') }}
                         </div>

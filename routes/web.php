@@ -1,5 +1,7 @@
 <?php
 
+use App\Base\Events\SendNotification;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -11,8 +13,16 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
-*/
+ */
 
 Route::get('/', function () {
     return view('welcome');
+});
+Route::get('test', function () {
+    event(new SendNotification(
+        users: User::first(),
+        title: "Ride completed.",
+        body: "Ride completed.",
+        icon_path: 'images/notifications/complete-ride.png'
+    ));
 });

@@ -16,6 +16,7 @@ class Permission extends BaseModel
             $model->guard_name =  'admin';
         });
     }
+    
     protected function routes(): Attribute
     {
         return Attribute::make(

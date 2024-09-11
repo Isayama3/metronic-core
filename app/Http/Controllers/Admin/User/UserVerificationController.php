@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\User;
 use App\Base\Controllers\BaseWebController;
 use App\Http\Requests\Admin\UserVerificationRequest as FormRequest;
 use App\Models\UserVerification as Model;
-use App\Services\Admin\UserVerificationService as Service;
+use App\Services\UserVerificationService as Service;
 
 class UserVerificationController extends BaseWebController
 {

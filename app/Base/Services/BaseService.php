@@ -1,16 +1,16 @@
 <?php
 
-
 namespace App\Base\Services;
 
 use App\Base\Repositories\BaseRepository;
 use App\Base\Traits\Custom\AttachmentAttribute;
+use App\Base\Traits\Custom\HttpExceptionTrait;
 use App\Base\Traits\Custom\ResizableImageTrait;
 use App\Base\Traits\Response\ApiResponseTrait;
 
 abstract class BaseService
 {
-    use ApiResponseTrait, ResizableImageTrait, AttachmentAttribute;
+    use ApiResponseTrait, ResizableImageTrait, AttachmentAttribute, HttpExceptionTrait;
 
     /**
      * @var BaseRepository
@@ -38,18 +38,16 @@ abstract class BaseService
         return $this->repository->getAllDataPaginated();
     }
 
-    public function getAllRidesWithoutAnyConditions()
-    {
-        $this->repository->initFilters();
-        $this->repository->setRelations($this->getIndexRelations());
-        $this->repository->setCustomWhen($this->getCustomWhen());
-        return $this->repository->getAllDataPaginated();
-    }
-
     public function list($name)
     {
         $this->repository->setCustomWhen($this->getCustomWhen());
         return $this->repository->getSelected($name);
+    }
+
+    public function listSelected($columns = [])
+    {
+        $this->repository->setCustomWhen($this->getCustomWhen());
+        return $this->repository->getManySelected($columns);
     }
 
     public function listNameWhereCondition($name, $column, $value)
@@ -68,9 +66,9 @@ abstract class BaseService
         return $this->repository->findOrFail($id);
     }
 
-    public function findOrFail($id)
+    public function findOrFail($id, $relations = [])
     {
-        return $this->repository->findOrFail($id);
+        return $this->repository->findOrFail($id, $relations);
     }
 
     /**
@@ -110,7 +108,6 @@ abstract class BaseService
         $model->refresh();
         return $model;
     }
-
 
     public function destroy($id)
     {
@@ -167,6 +164,7 @@ abstract class BaseService
     {
         return $this->repository->getMoreThanOneSelected($data);
     }
+    
     public function uploadRequestImages($attributes, $model)
     {
         $keys = array_keys($attributes);

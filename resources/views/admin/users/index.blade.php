@@ -14,7 +14,7 @@
     <th class="min-w-125px max-w-215px text-center">{{ __('admin.email') }}</th>
     <th class="min-w-125px max-w-215px text-center">{{ __('admin.verifications') }}</th>
     <th class="min-w-125px max-w-215px text-center">{{ __('admin.status') }}</th>
-    <th class="min-w-125px max-w-215px text-center">{{ __('admin.created_at') }}</th>
+    <th class="min-w-125px max-w-215px text-center">{{ __('admin.wallet') }}</th>
 @stop
 
 @section('table_body')
@@ -35,7 +35,13 @@
                 </div>
             </td>
             <td>{{ $record->email ?? __('admin.undifined') }}</td>
-            <td>@include('admin.users.components.verifications')</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal"
+                    data-bs-target="#verificationsModal-{{ $record->id }}">
+                    </i>{{ __('admin.verifications') }}
+                </button>
+                @include('admin.users.components.verifications', ['id' => $record->id])
+            </td>
             <td> {!! \App\Base\Helper\Field::toggleBooleanView(
                 name: 'active',
                 label: 'active',
@@ -44,9 +50,11 @@
             ) !!}
             </td>
             <td style="gap: 5px;">
-                <div class="badge badge-light-primary">
-                    {{ $record->created_at->format('Y-m-d') }}
-                </div>
+                {{-- @can($showPermission) --}}
+                <a href="{{ route('admin.users.wallet', $record->id) }}">
+                    <button class="btn btn-icon btn-primary btn-sm"><i class="fa-solid fa-wallet"></i></button>
+                </a>
+                {{-- @endcan --}}
             </td>
             <td class="text-end">
                 @include('admin.layouts.partials.crud-components.actions-buttons', [

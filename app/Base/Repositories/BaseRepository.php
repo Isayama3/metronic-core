@@ -2,21 +2,20 @@
 
 namespace App\Base\Repositories;
 
+use App\Base\Traits\Custom\HttpExceptionTrait;
 use App\Base\Traits\Custom\ResizableImageTrait;
 use App\Base\Traits\Logs\ActivityLogTrait;
-use Exception;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use App\Base\Traits\Model\FilterSort;
 use App\Base\Traits\Response\ApiResponseTrait;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Schema;
+use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\QueryBuilder\QueryBuilder;
 
 abstract class BaseRepository
 {
-    use ActivityLogTrait, ApiResponseTrait, ResizableImageTrait;
+    use ActivityLogTrait, ApiResponseTrait, ResizableImageTrait, HttpExceptionTrait;
 
     protected Model $model;
     protected string $modelName;
@@ -41,16 +40,18 @@ abstract class BaseRepository
 
     public function setRelations(array $relations): mixed
     {
-        if (!empty($relations))
+        if (!empty($relations)) {
             return $this->query->with(...$relations);
+        }
 
         return $this;
     }
 
     public function setCustomWhen(array $customWhen): mixed
     {
-        if ($customWhen['condition'])
+        if ($customWhen['condition']) {
             return $this->query->when($customWhen['condition'], $customWhen['callback']);
+        }
 
         return $this;
     }
@@ -74,6 +75,11 @@ abstract class BaseRepository
     public function getSelected(string $name): mixed
     {
         return $this->query->get(['id', $name]);
+    }
+
+    public function getManySelected($columns = []): mixed
+    {
+        return $this->query->get($columns);
     }
 
     public function listNameWhereCondition($name, $column, $value): mixed
@@ -122,7 +128,7 @@ abstract class BaseRepository
             return $model;
         }
 
-        throw new HttpResponseException($this->setStatusCode(422)->respondWithError(__("Attributes can not be empty")));
+        return $this->throwHttpExceptionForWebAndApi(__("Attributes can not be empty"));
     }
 
     public function createMany(array $attributes = []): mixed
@@ -131,10 +137,10 @@ abstract class BaseRepository
             $filtered = $this->cleanUpAttributes($attributes);
             return $this->model->insert($filtered);
         }
-        
+
         return false;
     }
-    
+
     /**
      * @param Model $model
      * @param array $attributes
@@ -159,7 +165,7 @@ abstract class BaseRepository
             return $model;
         }
 
-        throw new HttpResponseException($this->setStatusCode(422)->respondWithError(__("Attributes can not be empty")));
+        return $this->throwHttpExceptionForWebAndApi(__("Attributes can not be empty"), 422);
     }
 
     /**
@@ -214,7 +220,7 @@ abstract class BaseRepository
      *
      * @return int|bool
      */
-    public function updateAll($key = null, array $values = [], array $attributes = []): int|bool
+    public function updateAll($key = null, array $values = [], array $attributes = []): int | bool
     {
         if (!empty($attributes)) {
             $filtered = $this->cleanUpAttributes($attributes);
@@ -307,7 +313,6 @@ abstract class BaseRepository
         return true;
     }
 
-
     /**
      * @param array $relations
      * @return static
@@ -319,7 +324,6 @@ abstract class BaseRepository
         }
         return $this;
     }
-
 
     public function havingRaw($sql): static
     {
@@ -450,7 +454,7 @@ abstract class BaseRepository
      */
     public function getByKey($column, $data): mixed
     {
-        return $this->query->whereIn($column, (array)$data)->get();
+        return $this->query->whereIn($column, (array) $data)->get();
     }
 
     /**
@@ -516,5 +520,12 @@ abstract class BaseRepository
     public function listWhereTableName($table_name)
     {
         return $this->model->where('table_name', $table_name)->get(['id', 'name']);
+    }
+
+    public function setRelationWithSpecificCount($relation, $count): mixed
+    {
+        return $this->query->with([$relation => function ($query) use ($count) {
+            $query->latest()->limit($count);
+        }]);
     }
 }

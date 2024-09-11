@@ -6,7 +6,7 @@ use App\Base\Models\BaseModel;
 
 class Notification extends BaseModel
 {
-    public function getIconPathAttribute()
+    public function getIconPathUrlAttribute()
     {
         return $this->getImageUrl('icon_path');
     }

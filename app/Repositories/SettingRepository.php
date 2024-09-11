@@ -26,6 +26,11 @@ class SettingRepository extends BaseRepository
         return $this->model->where('title', $title)->first();
     }
 
+    public function whereKeyAndTitle($key, $title)
+    {
+        return $this->model->where('key', $key)->where('title', $title)->first();
+    }
+
     public function updateManyByKey($data, $key)
     {
         $this->model->where('key', $key)->delete();
@@ -43,7 +48,7 @@ class SettingRepository extends BaseRepository
     public function updateMainConfig($data)
     {
         $main_config = $this->model->where('key', 'main_config')->get();
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $main_config->where('title', $key)->first()->update(['value' => $value]);
         }
     }

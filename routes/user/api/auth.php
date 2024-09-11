@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Note :: Never change name of the routes, it will break everything.
+
 Route::post('login', 'AuthController@login')->name('login');
 Route::post('register', 'AuthController@register')->name('register');
 Route::post('verify-otp', 'AuthController@verifyOTP')->name('verify.otp');

@@ -2,29 +2,21 @@
 
 namespace App\Models;
 
+use App\Base\Traits\Custom\NotificationAttribute;
 use App\Base\Traits\Model\FilterSort;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    use FilterSort, HasRoles;
-    protected $table = 'admins';
-    public $timestamps = true;
+    use FilterSort, HasRoles, NotificationAttribute, SoftDeletes;
 
-    protected $fillable = [
-        'full_name',
-        'email',
-        'country_code',
-        'phone',
-        'password',
-        'active',
-        'country_id',
-        'language_id',
-        'type_id'
-    ];
+    protected $guarded = ['id', 'created_at', 'updated_at'];
+
+    public $timestamps = true;
 
     public static function getTableName()
     {
@@ -55,21 +47,38 @@ class Admin extends Authenticatable
         return [];
     }
 
+    public function getIsAgentAttribute(): bool
+    {
+        return $this->hasRole('agent');
+    }
+
     public function getImageUrlAttribute(): string
     {
-        return $this->getImageUrl('image');
+        if (app()->environment('local')) {
+            if (isset($this->attributes['image']) && !is_null($this->attributes['image'])) {
+                return asset($this->attributes['image']);
+            }
+
+            return asset("dashboard/blank.jpg");
+        }
+
+        if (isset($this->attributes['image']) && !is_null($this->attributes['image'])) {
+            return secure_asset($this->attributes['image']);
+        }
+
+        return secure_asset("dashboard/blank.jpg");
     }
 
     protected function password(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => (bcrypt($value)),
+            set: fn($value) => (bcrypt($value)),
         );
     }
 
-    public function safe()
+    public function wallet()
     {
-        return $this->hasOne('Safe');
+        return $this->hasOne(AgentWallet::class, 'admin_id');
     }
 
     public function bank_account()

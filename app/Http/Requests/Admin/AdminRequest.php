@@ -30,13 +30,15 @@ class AdminRequest extends AdminBaseRequest
                         'country_code' => 'required|numeric|exists:countries,phone_code',
                         'language_id' => 'required|integer|exists:languages,id',
                         'type_id' => 'required|integer|exists:types,id',
+                        'roles' => 'required|array',
                     ];
                 }
             case 'PUT': {
                     return [
                         'full_name' => 'required|string|max:255',
                         'email' => 'required|email|unique:admins,email,' . $this->route('admin'),
-                        // 'phone' => 'required|string|max:20|unique:admins,phone,' . $this->route('admin'),
+                        'phone' => 'required|string|max:20|unique:admins,phone,' . $this->route('admin'),
+                        'roles' => 'required|array',
                     ];
                 }
         }

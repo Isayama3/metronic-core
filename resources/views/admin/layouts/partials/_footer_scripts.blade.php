@@ -1,6 +1,7 @@
 <script src="{{ asset('dashboard/js/scripts.bundle.js') }}"></script>
 <script src="{{ asset('dashboard/plugins/global/plugins.bundle.js') }}"></script>
 <script src={{ asset('dashboard/extensions/jquery/jquery.min.js') }}></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 @include('admin.layouts.partials.scripts.delete')
 @include('admin.layouts.partials.scripts.plugins')
 @include('admin.layouts.partials.scripts.custom')

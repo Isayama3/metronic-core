@@ -8,7 +8,7 @@ use App\Http\Requests\User\CountryRequest as FormRequest;
 use App\Models\Country as Model;
 use App\Http\Resources\CountryResource as Resource;
 use App\Http\Resources\ListPhoneCodeResource;
-use App\Services\User\CountryService as Service;
+use App\Services\CountryService as Service;
 
 class CountryController extends BaseApiController
 {
