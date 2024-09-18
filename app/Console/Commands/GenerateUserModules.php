@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class GenerateUserModules extends Command
 {
@@ -44,8 +43,8 @@ class GenerateUserModules extends Command
 
     protected function generateService($name)
     {
-        $stub = $this->getStub('UserService');
-        $this->createFile("Services/User/{$name}Service.php", $stub, $name);
+        $stub = $this->getStub('Service');
+        $this->createFile("Services/{$name}Service.php", $stub, $name);
     }
 
     protected function generateController($name)
@@ -58,8 +57,10 @@ class GenerateUserModules extends Command
     {
         $path = app_path($path);
         $stub = str_replace('{{name}}', $name, $stub);
-        File::ensureDirectoryExists(dirname($path));
-        File::put($path, $stub);
+        if (!File::exists($path)) {
+            File::ensureDirectoryExists(dirname($path));
+            File::put($path, $stub);
+        }
     }
 
     protected function getStub($type)

@@ -36,25 +36,25 @@ class GenerateAdminModules extends Command
     protected function generateRequest($name)
     {
         $stub = $this->getStub('AdminRequest');
-        $this->createAppFiles("Http/Requests/Admin//{$name}Request.php", $stub, $name);
+        $this->createFile("Http/Requests/Admin//{$name}Request.php", $stub, $name);
     }
 
     protected function generateRepository($name)
     {
         $stub = $this->getStub('AdminRepository');
-        $this->createAppFiles("Repositories/{$name}Repository.php", $stub, $name);
+        $this->createFile("Repositories/{$name}Repository.php", $stub, $name);
     }
 
     protected function generateService($name)
     {
-        $stub = $this->getStub('AdminService');
-        $this->createAppFiles("Services/Admin//{$name}Service.php", $stub, $name);
+        $stub = $this->getStub('Service');
+        $this->createFile("Services//{$name}Service.php", $stub, $name);
     }
 
     protected function generateController($name)
     {
         $stub = $this->getStub('AdminController');
-        $this->createAppFiles("Http/Controllers/Admin/{$name}/{$name}Controller.php", $stub, $name);
+        $this->createFile("Http/Controllers/Admin/{$name}/{$name}Controller.php", $stub, $name);
     }
 
     protected function generateViews($name)
@@ -67,12 +67,14 @@ class GenerateAdminModules extends Command
         $this->createViewFiles("resources/views/admin/{$name}/show.blade.php", $this->getStub('AdminShow'), $name);
     }
 
-    protected function createAppFiles($path, $stub, $name)
+    protected function createFile($path, $stub, $name)
     {
         $path = app_path($path);
         $stub = str_replace('{{name}}', $name, $stub);
-        File::ensureDirectoryExists(dirname($path));
-        File::put($path, $stub);
+        if (!File::exists($path)) {
+            File::ensureDirectoryExists(dirname($path));
+            File::put($path, $stub);
+        }
     }
 
     protected function createViewFiles($path, $stub, $name)
@@ -82,7 +84,6 @@ class GenerateAdminModules extends Command
         File::ensureDirectoryExists(dirname($path));
         File::put($path, $stub);
     }
-
 
     protected function getStub($type)
     {

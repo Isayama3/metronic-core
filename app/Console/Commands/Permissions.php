@@ -5,8 +5,8 @@ namespace App\Console\Commands;
 use App\Models\Admin;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class Permissions extends Command
 {
@@ -43,9 +43,8 @@ class Permissions extends Command
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         DB::statement('TRUNCATE table permissions');
+        DB::statement('ALTER TABLE permissions AUTO_INCREMENT = 1');
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
-
-        // DB::statement('TRUNCATE TABLE permissions CASCADE');
 
         $base_path = app_path() . '/Http/Controllers/Admin';
         foreach (glob($base_path . '/*/Permissions.php') as $file) {
@@ -59,7 +58,20 @@ class Permissions extends Command
         $admin->assignRole('super_admin');
 
         $role = Role::firstOrCreate(['name' => 'agent', 'guard_name' => 'admin']);
-        $permissions = Permission::where('name', 'admin.agents.show')->pluck('id')->toArray();
+        $permissions = Permission::where(function ($q) {
+            $q->where('name', 'admin.wallet-tickets.index')
+                ->orWhere('name', 'admin.home.index')
+                ->orWhere('name', 'admin.agents.wallet')
+                ->orWhere('name', 'admin.wallet-tickets.collect')
+                ->orWhere('name', 'admin.wallet-tickets.reject')
+                ->orWhere('name', 'admin.wallet-tickets.reject')
+                ->orWhere('name', 'admin.agent-bank-account-transactions.index')
+                ->orWhere('name', 'admin.agent-bank-account-transactions.create')
+                ->orWhere('name', 'admin.agent-bank-account-transactions.store')
+            ;
+        })->pluck('id')->toArray();
         $role->syncPermissions($permissions);
+
+        return 'done';
     }
 }

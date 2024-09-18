@@ -6,7 +6,7 @@ use App\Base\Controllers\BaseApiController;
 use App\Http\Requests\User\{{name}}Request as FormRequest;
 use App\Models\{{name}} as Model;
 use App\Http\Resources\{{name}}Resource as Resource;
-use App\Services\User\{{name}}Service as Service;
+use App\Services\{{name}}Service as Service;
 
 class {{name}}Controller extends BaseApiController
 {
