@@ -12,6 +12,7 @@ return new class extends Migration
 			$table->increments('id');
 			$table->string('name', 50)->unique();
 			$table->boolean('active')->default(true);
+			$table->softDeletes();
 			$table->timestamps();
 		});
 	}

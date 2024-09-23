@@ -8,13 +8,11 @@ use App\Repositories\UserRepository;
 class UserService extends BaseService
 {
     protected UserRepository $UserRepository;
-    protected UserVerificationService $UserVerificationService;
 
-    public function __construct(UserRepository $UserRepository, UserVerificationService $UserVerificationService)
+    public function __construct(UserRepository $UserRepository)
     {
         parent::__construct($UserRepository);
         $this->UserRepository = $UserRepository;
-        $this->UserVerificationService = $UserVerificationService;
     }
 
     public function getUserByPhoneOrEmail($phone = null, $email = null)

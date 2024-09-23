@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             TypeSeeder::class,
             StatusSeeder::class,
-            VehicleModelSeeder::class,
             LanguageSeeder::class,
             PaymentMethodSeeder::class,
             AdminSeeder::class,

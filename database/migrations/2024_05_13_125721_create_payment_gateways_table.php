@@ -13,6 +13,7 @@ return new class extends Migration
 			$table->string('name');
 			$table->boolean('active')->default(true);
 			$table->double('total_transactions', 12,2)->default('0');
+			$table->softDeletes();
 			$table->timestamps();
 		});
 	}

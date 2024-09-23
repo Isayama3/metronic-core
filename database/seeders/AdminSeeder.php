@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
             'country_code' => 'US',
             'phone' => '1234567890',
             'password' => '123@Admin',
-            'active' => true,
+            'is_active' => true,
             'country_id' => 1,
             'language_id' => 1,
             'type_id' => 1,

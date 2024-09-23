@@ -10,6 +10,8 @@ return new class extends Migration
 	{
 		Schema::create('saved_places', function (Blueprint $table) {
 			$table->increments('id');
+			$table->string('title', 255);
+			$table->string('description', 255)->nullable();
 			$table->decimal('latitude', 9, 6);
 			$table->double('longitude', 9, 6);
 			$table->string('address', 255);

@@ -8,15 +8,18 @@ return new class extends Migration
 {
 	public function up()
 	{
-		Schema::create('vehicle_models', function(Blueprint $table) {
+		Schema::create('settings', function (Blueprint $table) {
 			$table->increments('id');
-			$table->string('name', 50);
+			$table->string('key');
+			$table->string('title')->nullable();
+			$table->longText('value');
+			$table->string('display_name')->nullable();
 			$table->timestamps();
 		});
 	}
 
 	public function down()
 	{
-		Schema::drop('vehicle_models');
+		Schema::drop('wallet_transactions');
 	}
 };

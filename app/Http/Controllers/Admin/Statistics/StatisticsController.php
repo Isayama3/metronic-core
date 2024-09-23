@@ -17,8 +17,7 @@ class StatisticsController extends Controller
             'series' => [10, 20, 15, 25, 30],
         ];
 
-        $last_rides = Ride::limit(10)->get();
 
-        return view('admin.statistics.index', compact('data', 'last_rides'));
+        return view('admin.statistics.index', compact('data'));
     }
 }
