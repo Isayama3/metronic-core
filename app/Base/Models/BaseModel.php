@@ -4,10 +4,10 @@ namespace App\Base\Models;
 
 use App\Base\Traits\Custom\AttachmentAttribute;
 use App\Base\Traits\Custom\NotificationAttribute;
+use App\Base\Traits\Custom\StorageHandle;
 use App\Base\Traits\Model\FilterSort;
 use App\Base\Traits\Model\Timestamp;
-use App\Models\General\Language;
-use App\Models\General\StorageHandle;
+use App\Base\Models\Language;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

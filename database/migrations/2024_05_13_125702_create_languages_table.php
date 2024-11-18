@@ -12,6 +12,8 @@ return new class extends Migration
 			$table->increments('id');
 			$table->boolean('active')->default(true);
 			$table->string('name', 50);
+			$table->string('locale', 3);
+			$table->string('dir', 3);
 			$table->timestamps();
 		});
 	}
