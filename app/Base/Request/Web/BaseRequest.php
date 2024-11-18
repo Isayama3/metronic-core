@@ -4,7 +4,7 @@ namespace App\Base\Request\Web;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-class BaseRequest extends FormRequest
+class Request extends FormRequest
 {
     public function authorize()
     {

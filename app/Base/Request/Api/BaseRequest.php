@@ -2,14 +2,14 @@
 
 namespace App\Base\Request\Api;
 
-use App\Base\Traits\Response\ApiResponseTrait;
+use App\Http\Traits\JsonResponseTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class BaseRequest extends FormRequest
+class Request extends FormRequest
 {
-    use ApiResponseTrait;
+    use JsonResponseTrait;
 
     public function authorize()
     {
@@ -19,13 +19,11 @@ class BaseRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         $errors = [];
+
         foreach ($validator->errors()->toArray() as $key => $error) {
             $errors[$key] = $error[0];
         }
 
-        throw new HttpResponseException($this->respondWithErrors(
-            message: $errors[array_key_first($errors)],
-            errors: $errors
-        ));
+        throw new HttpResponseException($this->jsonResponse(422, __('general::lang.wrongData'), $errors, null));
     }
 }

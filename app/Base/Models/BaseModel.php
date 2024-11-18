@@ -2,26 +2,32 @@
 
 namespace App\Base\Models;
 
+use App\Base\Traits\Custom\AttachmentAttribute;
 use App\Base\Traits\Custom\NotificationAttribute;
 use App\Base\Traits\Model\FilterSort;
 use App\Base\Traits\Model\Timestamp;
-use App\Models\Status;
+use App\Models\General\Language;
+use App\Models\General\StorageHandle;
+use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class BaseModel extends Model
 {
-    use HasFactory, Timestamp, FilterSort, NotificationAttribute;
+    use HasFactory, Timestamp, FilterSort, NotificationAttribute, Translatable, StorageHandle, AttachmentAttribute;
 
     protected $guarded = ['id', 'uuid', 'created_at', 'updated_at'];
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    protected $translatedAttributes = [];
 
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:00',
@@ -51,19 +57,98 @@ class BaseModel extends Model
     {
         $random_code = (new Collection)
             ->when($letters, fn($c) => $c->merge([
-                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-                'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-                'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
-                'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                'a',
+                'b',
+                'c',
+                'd',
+                'e',
+                'f',
+                'g',
+                'h',
+                'i',
+                'j',
+                'k',
+                'l',
+                'm',
+                'n',
+                'o',
+                'p',
+                'q',
+                'r',
+                's',
+                't',
+                'u',
+                'v',
+                'w',
+                'x',
+                'y',
+                'z',
+                'A',
+                'B',
+                'C',
+                'D',
+                'E',
+                'F',
+                'G',
+                'H',
+                'I',
+                'J',
+                'K',
+                'L',
+                'M',
+                'N',
+                'O',
+                'P',
+                'Q',
+                'R',
+                'S',
+                'T',
+                'U',
+                'V',
+                'W',
+                'X',
+                'Y',
+                'Z',
             ]))
             ->when($numbers, fn($c) => $c->merge([
-                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+                '6',
+                '7',
+                '8',
+                '9',
             ]))
             ->when($symbols, fn($c) => $c->merge([
-                '~', '!', '#', '$', '%', '^', '&', '*', '(', ')', '-',
-                '_', '.', ',', '<', '>', '?', '/', '\\', '{', '}', '[',
-                ']', '|', ':', ';',
+                '~',
+                '!',
+                '#',
+                '$',
+                '%',
+                '^',
+                '&',
+                '*',
+                '(',
+                ')',
+                '-',
+                '_',
+                '.',
+                ',',
+                '<',
+                '>',
+                '?',
+                '/',
+                '\\',
+                '{',
+                '}',
+                '[',
+                ']',
+                '|',
+                ':',
+                ';',
             ]))
             ->pipe(fn($c) => Collection::times($length, fn() => $c[random_int(0, $c->count() - 1)]))
             ->implode('');
@@ -120,14 +205,9 @@ class BaseModel extends Model
         return $this->getImageUrl('image');
     }
 
-    public function status()
+    public function scopeSorted($query, $type = 'asc')
     {
-        return $this->belongsTo(Status::class, 'status_id');
-    }
-
-    public function type()
-    {
-        return $this->belongsTo(Status::class, 'type_id');
+        return $query->orderBy('products.id', $type);
     }
 
     public function getImageUrl($attribute): string
@@ -150,5 +230,38 @@ class BaseModel extends Model
         }
 
         return secure_asset("dashboard/blank.jpg");
+    }
+
+    public function getMedia()
+    {
+        return DB::table('attachments')
+            ->where('attachmentable_type', '=', get_class($this)) // Exact match
+            ->where('attachmentable_id', $this->id)
+            ->get();
+    }
+
+    public function getTranslationsAttribute()
+    {
+        $selected_attributes = array_merge($this->translatedAttributes, ['locale']);
+        $translations_data = $this->trans()->select([ ...$selected_attributes])->get();
+        $defaultTranslations = [];
+
+        // Initialize default translations
+        foreach ($this->translatedAttributes as $attribute) {
+            foreach (Language::active()->get() as $lang) {
+                $defaultTranslations[$lang->locale][$attribute] = '';
+            }
+        }
+
+        // Set the translations, replacing null values with empty strings
+        foreach ($translations_data as $item) {
+            if (isset($defaultTranslations[$item->locale])) {
+                foreach ($this->translatedAttributes as $attribute) {
+                    $defaultTranslations[$item->locale][$attribute] = $item->{$attribute} ?? '';
+                }
+            }
+        }
+
+        return $defaultTranslations;
     }
 }

@@ -7,6 +7,9 @@ use App\Base\Traits\Custom\AttachmentAttribute;
 use App\Base\Traits\Custom\HttpExceptionTrait;
 use App\Base\Traits\Custom\ResizableImageTrait;
 use App\Base\Traits\Response\ApiResponseTrait;
+use App\Http\Traits\SendNotification;
+use App\Models\General\Language;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseService
 {
@@ -83,11 +86,23 @@ abstract class BaseService
      */
     public function store($data)
     {
-        $model = $this->repository->create($data);
-        !empty($this->getOneItemRelations()) ? $model->load(...$this->getOneItemRelations()) : null;
-        $this->uploadRequestImages($data, $model);
-        $model->refresh();
-        return $model;
+        $record = $this->repository->create($data);
+
+        $languages = Language::active()->get();
+
+        foreach ($languages as $language) {
+            if (isset($data[$language->locale])) {
+                $record->trans()->create([
+                    'locale' => $language->locale,
+                    ...$data[$language->locale],
+                ]);
+            }
+        }
+
+        !empty($this->getOneItemRelations()) ? $record->load(...$this->getOneItemRelations()) : null;
+        $this->uploadRequestImages($data, $record);
+        $record->refresh();
+        return $record;
     }
 
     /**
@@ -103,10 +118,17 @@ abstract class BaseService
     public function update($id, $data)
     {
         $this->repository->setRelations($this->getOneItemRelations());
-        $model = $this->repository->update($id, $data);
-        $this->uploadRequestImages($data, $model);
-        $model->refresh();
-        return $model;
+        $record = $this->repository->update($id, $data);
+        if (method_exists($record, 'trans')) {
+            $record->load(['trans']);
+        }
+        $this->updateRequestImages($data, $record);
+
+        if ($record instanceof Model) {
+            $record->refresh();
+        }
+
+        return $record;
     }
 
     public function destroy($id)
@@ -150,8 +172,7 @@ abstract class BaseService
     {
         return [
             'condition' => false,
-            'callback' => function ($q) {
-            },
+            'callback' => function ($q) {},
         ];
     }
 
@@ -164,8 +185,8 @@ abstract class BaseService
     {
         return $this->repository->getMoreThanOneSelected($data);
     }
-    
-    public function uploadRequestImages($attributes, $model)
+
+    public function uploadRequestImages($attributes, $record)
     {
         $keys = array_keys($attributes);
         $image_attributes = array_filter($keys, function ($key) {
@@ -174,9 +195,50 @@ abstract class BaseService
 
         foreach ($image_attributes as $image_attribute) {
             if (isset($attributes[$image_attribute]) && !is_null($attributes[$image_attribute])) {
-                $model->$image_attribute = $this->uploadImage($attributes[$image_attribute]);
-                $model->save();
+                $record->$image_attribute = $this->uploadImage($attributes[$image_attribute], 'uploads/' . ((new \ReflectionClass($record))->getShortName()), []);
+                $record->save();
             }
         }
+
+        if (!empty(request()->media)) {
+            foreach (request()->media as $image) {
+                if ($image) {
+                    Attachment::addAttachment($image, $record, 'uploads/' . ((new \ReflectionClass($record))->getShortName()), []);
+                }
+            }
+        }
+    }
+    public function updateRequestImages($attributes, $record)
+    {
+        $keys = array_keys($attributes);
+        $image_attributes = array_filter($keys, function ($key) {
+            return strpos($key, 'image') !== false;
+        });
+
+        foreach ($image_attributes as $image_attribute) {
+            if (isset($attributes[$image_attribute]) && !is_null($attributes[$image_attribute])) {
+                $record->$image_attribute = $this->updateImage($record->$attributes[$image_attribute], $attributes[$image_attribute], 'uploads/' . ((new \ReflectionClass($record))->getShortName()), []);
+                $record->save();
+            }
+        }
+
+        if (!empty(request()->media)) {
+            $record->attachmentRelation()->delete();
+            foreach (request()->media as $image) {
+                if ($image) {
+                    Attachment::addAttachment($image, $record, 'upload/' . ((new \ReflectionClass($record))->getShortName()), []);
+                }
+            }
+        }
+    }
+
+    function sendNotification($token, $title, $message, $data, $type = null)
+    {
+        $notification = new SendNotification();
+        $notification->setToken($token)
+            ->setData(array('click_action' => 'FLUTTER_NOTIFICATION_CLICK', 'type' => $type, 'data' => $data))
+            ->setSubject($title)
+            ->setText($message)
+            ->sendToAndroid();
     }
 }

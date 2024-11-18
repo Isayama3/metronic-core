@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UserBaseRequest extends FormRequest
+class ProviderBaseRequest extends FormRequest
 {
     use ApiResponseTrait;
 
@@ -18,7 +18,7 @@ class UserBaseRequest extends FormRequest
             return true;
         }
 
-        return Auth::guard('user-api')->check();
+        return Auth::guard('provider')->check();
     }
 
     public function failedValidation(Validator $validator)

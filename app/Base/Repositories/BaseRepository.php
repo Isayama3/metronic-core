@@ -152,7 +152,6 @@ abstract class BaseRepository
         if (!empty($attributes)) {
             $filtered = $this->cleanUpAttributes($attributes);
             $model = $this->query->findOrFail($id);
-
             tap($model)->update($filtered)->fresh();
 
             $this->propertyLogActivity(

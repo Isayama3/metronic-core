@@ -20,7 +20,8 @@
         "opcodesio/log-viewer": "^3.10",
         "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-permission": "^6.7",
-        "spatie/laravel-query-builder": "^5.8"
+        "spatie/laravel-query-builder": "^5.8",
+        "astrotomic/laravel-translatable": "^11.9"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.12",

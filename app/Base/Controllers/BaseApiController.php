@@ -75,22 +75,23 @@ abstract class BaseApiController
     public function store()
     {
         $record = $this->service->store($this->request->validated());
-        return $this->respondWithSuccess(__('main.successfully_added'), ['record' => new $this->resource($record)]);
+        return $this->respondWithSuccess(__('lang.successfully_added'), ['record' => new $this->resource($record)]);
     }
 
     public function update($id)
     {
         $record = $this->service->update($id, $this->request->validated());
-        return $this->respondWithSuccess(__('main.successfully_updated'), ['record' => new $this->resource($record)]);
+        return $this->respondWithSuccess(__('lang.successfully_updated'), ['record' => new $this->resource($record)]);
     }
 
     public function destroy($id)
     {
-        if (!$this->hasDelete)
-            return $this->setStatusCode(422)->respondWithError(__('main.the_model_cannot_be_deleted'));
+        if (!$this->hasDelete) {
+            return $this->setStatusCode(422)->respondWithError(__('lang.the_model_cannot_be_deleted'));
+        }
 
         $this->service->destroy($id);
 
-        return $this->respondWithSuccess(__('main.successfully_deleted'));
+        return $this->respondWithSuccess(__('lang.successfully_deleted'));
     }
 }
